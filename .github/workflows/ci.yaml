@@ -93,12 +93,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        
+      - name: Download Artifact
+        run: |
+          gh run download ${{ github.run_id }} -n spring-boot-web
                  
-      - name: DownloadaBuildArtifact
-        uses: actions/download-artifact@v4.1.4
-        with:
-          name: spring-boot-web
-          path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+      # - name: DownloadaBuildArtifact
+      #   uses: actions/download-artifact@v4.1.4
+      #   with:
+      #     name: spring-boot-web
+      #     path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
               
       - name: Build Docker image
         run: |
