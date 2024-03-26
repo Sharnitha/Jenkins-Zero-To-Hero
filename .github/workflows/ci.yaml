@@ -52,7 +52,13 @@ jobs:
       - name: UploadArtifact
         uses: actions/upload-artifact@v2
         with:
-          name: springartifacts
+          name: spring-boot-web
+          path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+          
+      - name: DownloadaBuildArtifact
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: spring-boot-web
           path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
 
   sonar-test:
@@ -82,8 +88,8 @@ jobs:
       - name: DownloadaBuildArtifact
         uses: actions/download-artifact@v4.1.4
         with:
-          name: springartifacts
-          path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target
+          name: spring-boot-web
+          path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
               
       - name: Build Docker image
         run: |
