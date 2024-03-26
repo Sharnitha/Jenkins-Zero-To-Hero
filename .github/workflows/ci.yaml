@@ -36,6 +36,7 @@ jobs:
           name: spring-boot-web
           path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
   sonarcloud:
+    needs: maven-build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
