@@ -31,7 +31,9 @@ jobs:
     steps:
       - name: javaversion
         run: |
-          cd /home/Sharni/actions-runner/_work/_tool/maven/3.6.3/x64/bin/mvn --version
+          cd /home/Sharni/actions-runner/_work/_tool/maven/3.6.3/x64/bin
+          pwd
+          mvn --version
      
   #     # - name: Checkout code
   #     #   uses: actions/checkout@v4
