@@ -23,9 +23,6 @@ jobs:
         uses: stCarolas/setup-maven@v5
         with:
          maven-version: 3.6.3
-
-      - name: maven-version
-        run: mvn --version
               
   # maven-build:
   Javaversion:
@@ -34,9 +31,8 @@ jobs:
     steps:
       - name: javaversion
         run: |
-          java --version
-          mvn --version
-          
+          cd /home/Sharni/actions-runner/_work/_tool/maven/3.6.3/x64/bin/mvn --version
+     
   #     # - name: Checkout code
   #     #   uses: actions/checkout@v4
   #     # - name: Set up JDK
