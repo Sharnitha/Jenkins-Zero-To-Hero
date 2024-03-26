@@ -2,9 +2,9 @@ name: CI from GitHub
  
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - main
+  # push:
+  #   branches:
+  #   - main
  
 jobs:
   maven-build:
@@ -35,6 +35,18 @@ jobs:
         with:
           name: spring-boot-web
           path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
  
   # sonar-test:
   #   runs-on: ubuntu-latest
