@@ -60,6 +60,10 @@ jobs:
         with:
           name: spring-boot-web
           path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+          retry-when-unsuccessful: true
+          retry-max-attempts: 20
+          retry-backoff: exponential
+          retry-backoff-max: 30s
 
   sonar-test:
     runs-on: self-hosted
