@@ -7,23 +7,41 @@ on:
   #   - main
  
 jobs:
-  maven-build:
+  JavaMavenInstall:
     runs-on: self-hosted
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+        
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'adopt'
-          # cache: 'maven'
-
+          
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
         with:
          maven-version: 3.9.6
+              
+  maven-build:
+    needs: JavaMavenInstall
+    runs-on: self-hosted
+    steps:
+    
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
+      # - name: Set up JDK
+      #   uses: actions/setup-java@v4
+      #   with:
+      #     java-version: '11'
+      #     distribution: 'adopt'
+      #     # cache: 'maven'
+
+      # - name: Set up Maven
+      #   uses: stCarolas/setup-maven@v5
+      #   with:
+      #    maven-version: 3.9.6
 
       - name: Build with Maven
         run: |
@@ -44,28 +62,28 @@ jobs:
   #     run: mvn sonar:sonar -Dsonar.host.url=http://172.190.116.64:9000/ -Dsonar.login=ce70c3c87d57c5246ca1325bc0ccaa1a8a9d85c8
  
   sonar-test:
-    runs-on: ubuntu-latest
-    needs: maven-build
+    runs-on: self-hosted
+    needs: [JavaMavenInstall, maven-build]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'adopt'
-
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v5
-        with:
-         maven-version: 3.9.6
- 
       - name: Test with Sonarqube
         run: |
           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
           mvn sonar:sonar -Dsonar.host.url=http://172.190.116.64:9000/ -Dsonar.login=ce70c3c87d57c5246ca1325bc0ccaa1a8a9d85c8
+          
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
+      
+      # - name: Set up JDK
+      #   uses: actions/setup-java@v4
+      #   with:
+      #     java-version: '11'
+      #     distribution: 'adopt'
 
+      # - name: Set up Maven
+      #   uses: stCarolas/setup-maven@v5
+      #   with:
+      #    maven-version: 3.9.6
+      
 #   deploy-stag:
 #     runs-on: ubuntu-latest
 #     needs: maven-build
