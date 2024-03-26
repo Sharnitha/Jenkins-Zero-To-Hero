@@ -1,9 +1,10 @@
 name: CI from GitHub
  
 on:
+  workflow_dispatch:
   push:
     branches:
-      - main
+    - main
  
 jobs:
   maven-build:
@@ -24,36 +25,31 @@ jobs:
         with:
          maven-version: 3.9.6
 
-      - name: Maven Version
-        run: |
-          java --version
-          mvn --version
- 
       - name: Build with Maven
         run: |
           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
           mvn clean package
  
-  #     - name: Upload Artifact
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: spring-boot-web
-  #         path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: spring-boot-web
+          path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
  
-#   sonar-test:
-#     runs-on: ubuntu-latest
-#     needs: maven-build
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
+  # sonar-test:
+  #   runs-on: ubuntu-latest
+  #   needs: maven-build
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
       
-#       - name: Setup JDK
-#         uses: actions/setup-java@v2
-#         with:
-#           java-version: '11'
+  #     - name: Setup JDK
+  #       uses: actions/setup-java@v2
+  #       with:
+  #         java-version: '11'
  
-#       - name: Test with Sonarqube
-# run: mvn sonar:sonar -Dsonar.host.url=http://1.2.3.4:9000/ -Dsonar.login=7ad9cddf8751a7868ff5d
+  #     - name: Test with Sonarqube
+  #       run: mvn sonar:sonar -Dsonar.host.url=http://1.2.3.4:9000/ -Dsonar.login=7ad9cddf8751a7868ff5d
  
 #   deploy-stag:
 #     runs-on: ubuntu-latest
