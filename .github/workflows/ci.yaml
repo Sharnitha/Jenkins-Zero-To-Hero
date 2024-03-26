@@ -62,7 +62,9 @@ jobs:
          maven-version: 3.9.6
  
       - name: Test with Sonarqube
-        run: mvn sonar:sonar -Dsonar.host.url=http://172.190.116.64:9000/ -Dsonar.login=ce70c3c87d57c5246ca1325bc0ccaa1a8a9d85c8
+        run: |
+          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          mvn sonar:sonar -Dsonar.host.url=http://172.190.116.64:9000/ -Dsonar.login=ce70c3c87d57c5246ca1325bc0ccaa1a8a9d85c8
 
 #   deploy-stag:
 #     runs-on: ubuntu-latest
