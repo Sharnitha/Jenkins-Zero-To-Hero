@@ -19,39 +19,39 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
           
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v5
-        with:
-         maven-version: 3.6.3
-              
-  maven-build:   
-    runs-on: self-hosted
-    needs: JavaMavenInstall
-    steps:
-      # - name: Checkout code
-      #   uses: actions/checkout@v4
-      # - name: Set up JDK
-      #   uses: actions/setup-java@v4
-      #   with:
-      #     java-version: '11'
-      #     distribution: 'adopt'
-      #     # cache: 'maven'
-
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v5
-        with:
-         maven-version: 3.6.3
-
-      - name: Build with Maven
+      - name: InstallMaven_CLI
         run: |
-          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-          mvn clean package
+          sudo apt update
+          wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip
+          unzip apache-maven-3.9.6-bin.zip
+          sudo mv apache-maven-3.6.3 /opt/
+          mvn --version
+         
+      # - name: Set up Maven
+      #   uses: stCarolas/setup-maven@v5
+      #   with:
+      #    maven-version: 3.6.3
+              
+  # maven-build:   
+  #   runs-on: self-hosted
+  #   needs: JavaMavenInstall
+  #   steps:
+  
+  #     - name: Set up Maven
+  #       uses: stCarolas/setup-maven@v5
+  #       with:
+  #        maven-version: 3.6.3
+
+  #     - name: Build with Maven
+  #       run: |
+  #         cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+  #         mvn clean package
  
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: spring-boot-web
-          path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+  #     - name: Upload Artifact
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: spring-boot-web
+  #         path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
           
 
   # sonar-test:
