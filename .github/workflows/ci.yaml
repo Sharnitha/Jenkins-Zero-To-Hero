@@ -17,7 +17,12 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-          cache: 'maven'
+          # cache: 'maven'
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+         maven-version: 3.8.2
 
       - name: Maven Version
         run: |
