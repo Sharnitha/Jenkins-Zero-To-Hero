@@ -88,18 +88,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
-      - name: Download Artifact
-        run: |
-          gh run download ${{ github.run_id }}
-          ls
-          cd spring-boot-web
-          ls
-          # cd java-maven-sonar-argocd-helm-k8s/spring-boot-app/
-          # mkdir target/
-          # cd target/
-          # cd ../../..
-           
+              
       # - name: DownloadaBuildArtifact
       #   uses: actions/download-artifact@v4.1.4
       #   with:
@@ -109,6 +98,7 @@ jobs:
       - name: Build Docker image
         run: |
           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          gh run download ${{ github.run_id }}
           docker build -t github-demo:${{ github.run_id }} .
           docker images
           docker login -u sharnithadockerhub -p DockerhubSharni123@
