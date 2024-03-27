@@ -101,9 +101,9 @@ jobs:
         run: |
           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
           gh run download ${{ github.run_id }}
-          docker build -t practice.azurecr.io:${{ github.run_id }} .
-          docker tag practice.azurecr.io:${{ github.run_id }} sharnithadockerhub/practice.azurecr.io:${{ github.run_id }}
-          docker push sharnithadockerhub/practice.azurecr.io:${{ github.run_id }}
+          docker build -t githubregistring.azurecr.io:${{ github.run_id }} .
+          # docker tag practice.azurecr.io:${{ github.run_id }} sharnithadockerhub/practice.azurecr.io:${{ github.run_id }}
+          docker push githubregistring.azurecr.io:${{ github.run_id }}
      
 
                    
