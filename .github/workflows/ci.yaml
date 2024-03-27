@@ -91,11 +91,11 @@ jobs:
         
       - name: Download Artifact
         run: |
+          gh run download ${{ github.run_id }}
           ls
           # cd java-maven-sonar-argocd-helm-k8s/spring-boot-app/
           # mkdir target/
           # cd target/
-          gh run download ${{ github.run_id }} -n spring-boot-web
           # cd ../../..
            
       # - name: DownloadaBuildArtifact
