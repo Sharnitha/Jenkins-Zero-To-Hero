@@ -94,7 +94,7 @@ jobs:
           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
           mkdir target/
           cd target/
-          echo"fullpath"
+          echo "fullpath"
           pwd
           gh run download ${{ github.run_id }} -n spring-boot-web
           cd ../../..
