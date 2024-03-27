@@ -91,11 +91,12 @@ jobs:
         
       - name: Download Artifact
         run: |
-          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-          mkdir target/
-          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/
-          gh run download ${{ github.run_id }} -n spring-boot-web
-          cd ../../..
+          ls
+          # cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          # mkdir target/
+          # cd java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/
+          # gh run download ${{ github.run_id }} -n spring-boot-web
+          # cd ../../..
            
       # - name: DownloadaBuildArtifact
       #   uses: actions/download-artifact@v4.1.4
