@@ -98,7 +98,7 @@ jobs:
       - name: Build Docker image
         run: |
           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-          gh run download ${{ github.run_id }}
+          # gh run download ${{ github.run_id }}
           docker build -t github-demo:${{ github.run_id }} .
           docker images
           docker login -u sharnithadockerhub -p DockerhubSharni123@
