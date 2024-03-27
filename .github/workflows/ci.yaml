@@ -54,14 +54,6 @@ jobs:
         with:
           name: spring-boot-web
           path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
-
-      - name: finding jarfile
-        run: | 
-           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app/
-           ls -a
-           cd target/
-           ls -a
-
           
       # - name: DownloadaBuildArtifact
       #   uses: actions/download-artifact@v4.1.4
@@ -102,10 +94,9 @@ jobs:
           gh run download ${{ github.run_id }} -n spring-boot-web
 
       - name: finding jarfile
-        run: | 
-           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app/
+        run: |
            ls -a
-           cd target/
+           cd java-maven-sonar-argocd-helm-k8s
            ls -a
                  
       # - name: DownloadaBuildArtifact
