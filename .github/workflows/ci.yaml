@@ -61,7 +61,7 @@ jobs:
              
   DockerimageBuildPush-stage:
     runs-on: self-hosted
-    needs: maven-build
+    needs: sonar-test
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -81,7 +81,11 @@ jobs:
           docker build -t githubregistring.azurecr.io/demoenv:${{ github.run_id }}  
           # docker tag practice.azurecr.io:${{ github.run_id }} sharnithadockerhub/practice.azurecr.io:${{ github.run_id }}
           docker push githubregistring.azurecr.io/demoenv:${{ github.run_id }}
-
+       
+  Trivyscan:
+    runs-on: self-hosted
+    needs: DockerimageBuildPush-stage
+    steps:
       - name: Aqua Security Trivy
         uses: aquasecurity/trivy-action@0.18.0
         with:   
