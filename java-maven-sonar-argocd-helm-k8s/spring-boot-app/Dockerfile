@@ -3,13 +3,15 @@
 FROM adoptopenjdk/openjdk11:alpine-jre
 
 # Simply the artifact path
-ARG artifact=spring-boot-web.jar
+# ARG artifact=spring-boot-web.jar
 
-RUN ls
+# RUN ls
 
 WORKDIR /home/Sharni/actions-runner/_work/Jenkins-Zero-To-Hero/Jenkins-Zero-To-Hero/spring-boot-web
 
-COPY ${artifact} app.jar
+RUN ls
+
+COPY spring-boot-web.jar app.jar
 
 # # This should not be changed
 ENTRYPOINT ["java","-jar","app.jar"]
