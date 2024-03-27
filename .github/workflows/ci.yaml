@@ -10,8 +10,8 @@ jobs:
   JavaInstall:
     runs-on: self-hosted
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
         
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -36,8 +36,8 @@ jobs:
     runs-on: self-hosted
     needs: JavaInstall
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
         
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
@@ -55,10 +55,6 @@ jobs:
           name: spring-boot-web
           path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
 
-      - name: Download Artifact
-        run: |
-        
-          gh run download ${{ github.run_id }} -n spring-boot-web
           
       # - name: DownloadaBuildArtifact
       #   uses: actions/download-artifact@v4.1.4
@@ -74,8 +70,8 @@ jobs:
     runs-on: self-hosted
     needs: maven-build
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
         
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
@@ -109,7 +105,7 @@ jobs:
           cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
           docker build -t github-demo:${{ github.run_id }} .
           docker images
-          echo DockerhubSharni123@ | docker login -u sharnithadockerhub --password-stdin
+          echo Sharnitha123@ | docker login -u sharnithadockerhub --password-stdin
           docker push github-demo:${{ github.run_id }}
  
 #   update-deployment:
