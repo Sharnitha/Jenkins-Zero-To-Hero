@@ -9,7 +9,7 @@ WORKDIR /opt/app
 
 RUN ls -a
 
-# COPY ${artifact} app.jar
+COPY ${artifact} app.jar
 
-# # This should not be changed
-# ENTRYPOINT ["java","-jar","app.jar"]
+# This should not be changed
+ENTRYPOINT ["java","-jar","app.jar"]
