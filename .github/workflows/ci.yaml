@@ -92,26 +92,21 @@ jobs:
       - name: Download Artifact
         run: |
           gh run download ${{ github.run_id }} -n spring-boot-web
-
-      - name: finding jarfile
-        run: |
-           ls -a
-           cd java-maven-sonar-argocd-helm-k8s
-           ls -a
-                 
+           
       # - name: DownloadaBuildArtifact
       #   uses: actions/download-artifact@v4.1.4
       #   with:
       #     name: spring-boot-web
       #     path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
               
-      # - name: Build Docker image
-      #   run: |
-      #     cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-      #     docker build -t github-demo:${{ github.run_id }} .
-      #     docker images
-      #     echo Sharnitha123@ | docker login -u sharnithadockerhub --password-stdin
-      #     docker push github-demo:${{ github.run_id }}
+      - name: Build Docker image
+        run: |
+          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          docker build -t github-demo:${{ github.run_id }} .
+          docker images
+          docker login -u sharnithadockerhub -p Sharnitha123@
+          docker tag github-demo:${{github.run_id}} sharnithadockerhub/github-demo:{{github.run_id}}
+          docker push sharnithadockerhub/github-demo:{{github.run_id}}
  
 #   update-deployment:
 #     runs-on: ubuntu-latest
