@@ -28,7 +28,7 @@ jobs:
        with:
           keyvault: "Githubaction"
           secrets: 'clientusername'  # comma separated list of secret keys that need to be fetched from the Key Vault 
-          id: myGetSecretAction
+          
             
 #   maven-build:   
 #     runs-on: self-hosted
