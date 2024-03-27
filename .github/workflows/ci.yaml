@@ -7,88 +7,88 @@ on:
   #   - main
  
 jobs:
-  # JavaInstall:
+  JavaInstall:
+    runs-on: self-hosted
+    steps:
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
+        
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+          
+      # - name: InstallMaven_CLI
+      #   run: |
+      #     sudo apt update
+      #     wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip
+      #     unzip apache-maven-3.9.6-bin.zip
+      #     sudo mv apache-maven-3.6.3 /opt/
+      #     mvn --version
+         
+      # - name: Set up Maven
+      #   uses: stCarolas/setup-maven@v5
+      #   with:
+      #    maven-version: 3.6.3
+              
+  maven-build:   
+    runs-on: self-hosted
+    needs: JavaInstall
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+         maven-version: 3.6.3
+
+      - name: Build with Maven
+        run: |
+          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          mvn clean package
+ 
+      - name: UploadArtifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: spring-boot-web
+          path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+          
+      # - name: DownloadaBuildArtifact
+      #   uses: actions/download-artifact@v4.1.4
+      #   with:
+      #     name: spring-boot-web
+      #     path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+      #     retry-when-unsuccessful: true
+      #     retry-max-attempts: 20
+      #     retry-backoff: exponential
+      #     retry-backoff-max: 30s
+
+  # sonar-test:
   #   runs-on: self-hosted
+  #   needs: maven-build
   #   steps:
   #     # - name: Checkout code
   #     #   uses: actions/checkout@v4
-        
-  #     - name: Set up JDK
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         java-version: '11'
-  #         distribution: 'adopt'
-          
-  #     # - name: InstallMaven_CLI
-  #     #   run: |
-  #     #     sudo apt update
-  #     #     wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip
-  #     #     unzip apache-maven-3.9.6-bin.zip
-  #     #     sudo mv apache-maven-3.6.3 /opt/
-  #     #     mvn --version
-         
-  #     # - name: Set up Maven
-  #     #   uses: stCarolas/setup-maven@v5
-  #     #   with:
-  #     #    maven-version: 3.6.3
-              
-  # maven-build:   
-  #   runs-on: self-hosted
-  #   needs: JavaInstall
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
         
   #     - name: Set up Maven
   #       uses: stCarolas/setup-maven@v5
   #       with:
   #        maven-version: 3.6.3
-
-  #     - name: Build with Maven
+         
+  #     - name: Test with Sonarqube
   #       run: |
   #         cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-  #         mvn clean package
- 
-  #     - name: UploadArtifact
-  #       uses: actions/upload-artifact@v4.3.1
-  #       with:
-  #         name: spring-boot-web
-  #         path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
-          
-  #     # - name: DownloadaBuildArtifact
-  #     #   uses: actions/download-artifact@v4.1.4
-  #     #   with:
-  #     #     name: spring-boot-web
-  #     #     path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
-  #     #     retry-when-unsuccessful: true
-  #     #     retry-max-attempts: 20
-  #     #     retry-backoff: exponential
-  #     #     retry-backoff-max: 30s
-
-  # # sonar-test:
-  # #   runs-on: self-hosted
-  # #   needs: maven-build
-  # #   steps:
-  # #     # - name: Checkout code
-  # #     #   uses: actions/checkout@v4
-        
-  # #     - name: Set up Maven
-  # #       uses: stCarolas/setup-maven@v5
-  # #       with:
-  # #        maven-version: 3.6.3
-         
-  # #     - name: Test with Sonarqube
-  # #       run: |
-  # #         cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
-  # #         mvn sonar:sonar -Dsonar.host.url=http://172.190.116.64:9000/ -Dsonar.login=ce70c3c87d57c5246ca1325bc0ccaa1a8a9d85c8
+  #         mvn sonar:sonar -Dsonar.host.url=http://172.190.116.64:9000/ -Dsonar.login=ce70c3c87d57c5246ca1325bc0ccaa1a8a9d85c8
              
   DockerimageBuildPush-stage:
     runs-on: self-hosted
-    # needs: maven-build
+    needs: maven-build
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Docker Login to ACR
         uses: docker/login-action@v3.1.0
         with:
@@ -96,7 +96,20 @@ jobs:
           username: c03d7f87-710f-41e6-951e-1b48aebeb8f0
           password: GW58Q~Mvnuk1yuGIcLAp_T.3G0bv2_9UlHA-Cc-N
           ecr: false
-              
+
+      - name: Build Docker image
+        run: |
+          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          gh run download ${{ github.run_id }}
+          docker build -t practice.azurecr.io:${{ github.run_id }} .
+          docker tag practice.azurecr.io:${{ github.run_id }} sharnithadockerhub/practice.azurecr.io:${{ github.run_id }}
+          docker push sharnithadockerhub/practice.azurecr.io:${{ github.run_id }}
+     
+
+                   
+       
+       
+          
       # - name: DownloadaBuildArtifact
       #   uses: actions/download-artifact@v4.1.4
       #   with:
