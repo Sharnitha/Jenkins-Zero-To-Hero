@@ -5,11 +5,11 @@ FROM adoptopenjdk/openjdk11:alpine-jre
 # Simply the artifact path
 ARG artifact=spring-boot-web/spring-boot-web.jar
 
-RUN gh run download ${{ github.run_id }}
-
 RUN ls
 
-# WORKDIR /home/Sharni/actions-runner/_work/Jenkins-Zero-To-Hero/Jenkins-Zero-To-Hero/spring-boot-web
+WORKDIR /home/Sharni/actions-runner/_work/Jenkins-Zero-To-Hero/Jenkins-Zero-To-Hero/spring-boot-app/spring-boot-web
+
+RUN ls 
 
 COPY spring-boot-web.jar app.jar
 
