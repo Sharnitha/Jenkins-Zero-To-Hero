@@ -92,7 +92,7 @@ jobs:
       - name: Download Artifact
         run: |
           cd java-maven-sonar-argocd-helm-k8s
-          ll
+          ls
           cd spring-boot-app
           mkdir target/
           cd target/
