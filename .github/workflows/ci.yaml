@@ -103,8 +103,8 @@ jobs:
           docker build -t github-demo:${{ github.run_id }} .
           docker images
           docker login -u sharnithadockerhub -p DockerhubSharni123@
-          docker tag github-demo:${{ github.run_id }} sharnithadockerhub/github-demo:{{ github.run_id }}
-          docker push sharnithadockerhub/github-demo:{{ github.run_id }}
+          docker tag github-demo:${{ github.run_id }} sharnithadockerhub/github-demo:${{ github.run_id }}
+          docker push sharnithadockerhub/github-demo:${{ github.run_id }}
  
 #   update-deployment:
 #     runs-on: ubuntu-latest
