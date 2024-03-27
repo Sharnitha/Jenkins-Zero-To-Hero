@@ -93,6 +93,8 @@ jobs:
         run: |
           gh run download ${{ github.run_id }}
           ls
+          cd spring-boot-web
+          ls
           # cd java-maven-sonar-argocd-helm-k8s/spring-boot-app/
           # mkdir target/
           # cd target/
