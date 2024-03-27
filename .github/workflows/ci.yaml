@@ -84,7 +84,7 @@ jobs:
              
   DockerimageBuildPush-stage:
     runs-on: self-hosted
-    # needs: sonar-test
+    needs: sonar-test
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
