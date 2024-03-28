@@ -9,7 +9,7 @@ on:
 jobs:
   JavaInstall:
     # if: "github.ref == github.event.pull_request.head.ref"
-    if: github.ref == github.event.pull_request.head.ref && github.ref == 'refs/heads/main'
+    if: github.ref == github.event.pull_request.head.ref || github.ref == 'refs/heads/main'
     runs-on: self-hosted
     steps:
       # - name: Checkout code
@@ -33,7 +33,7 @@ jobs:
           
             
   maven-build:   
-    if: github.ref == github.event.pull_request.head.ref && github.ref == 'refs/heads/main'
+    if: github.ref == github.event.pull_request.head.ref || github.ref == 'refs/heads/main'
     runs-on: self-hosted
     needs: JavaInstall
     steps:
@@ -58,9 +58,9 @@ jobs:
           
   sonar-test:
     if: github.ref != github.event.pull_request.head.ref && github.ref == 'refs/heads/main'
-    # if: github.ref == github.event.pull_request.head.ref && github.ref == 'refs/heads/main'
+    # if: github.ref == github.event.pull_request.head.ref || github.ref == 'refs/heads/main'
     runs-on: self-hosted
-    # needs: maven-build
+    needs: maven-build
     steps:
       # - name: Checkout code
       #   uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
           mvn sonar:sonar -Dsonar.host.url=http://172.190.116.64:9000/ -Dsonar.login=ce70c3c87d57c5246ca1325bc0ccaa1a8a9d85c8
              
   DockerimageBuildPush-stage:
-    if: github.ref == github.event.pull_request.head.ref && github.ref == 'refs/heads/main'
+    if: github.ref == github.event.pull_request.head.ref || github.ref == 'refs/heads/main'
     runs-on: self-hosted
     needs: sonar-test
     steps:
@@ -100,7 +100,7 @@ jobs:
           docker push githubregistring.azurecr.io/demoenv:${{ github.run_id }}
        
   Trivyscan:
-    if: github.ref == github.event.pull_request.head.ref && github.ref == 'refs/heads/main'
+    if: github.ref == github.event.pull_request.head.ref || github.ref == 'refs/heads/main'
     runs-on: self-hosted
     needs: DockerimageBuildPush-stage
     steps:
