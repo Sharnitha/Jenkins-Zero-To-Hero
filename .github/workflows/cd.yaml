@@ -2,7 +2,7 @@ name: cd on GitHub
 on:
   workflow_run:
     workflows: 
-      - CI from GitHub
+      - CI from GitHub 
     types:
       - completed
 jobs:
