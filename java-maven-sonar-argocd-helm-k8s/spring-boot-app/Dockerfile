@@ -13,5 +13,5 @@ RUN ls
 
 COPY ${artifact} app.jar
 
-# # This should not be changed
+ # This should not be changed
 ENTRYPOINT ["java","-jar","app.jar"]
