@@ -60,7 +60,7 @@ jobs:
     if: "github.ref != github.event.pull_request.head.ref"
     # if: github.ref != github.event.pull_request.head.ref || github.ref == 'refs/heads/main'
     runs-on: self-hosted
-    needs: maven-build
+    # needs: maven-build
     steps:
       # - name: Checkout code
       #   uses: actions/checkout@v4
