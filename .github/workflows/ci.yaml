@@ -1,0 +1,145 @@
+name: CI from GitHub
+ 
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+ 
+jobs:
+  JavaInstall:
+    runs-on: self-hosted
+    steps:
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
+        
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+  #     - name: login to az
+  #       run: |
+  #         az login --service-principal -u c03d7f87-710f-41e6-951e-1b48aebeb8f0 -p GW58Q~Mvnuk1yuGIcLAp_T.3G0bv2_9UlHA-Cc-N --tenant 406f6fb2-e087-4d29-9642-817873fddc4c
+  # keyvault:
+  #   runs-on: self-hosted
+  #   steps:
+  #    - uses: Azure/get-keyvault-secrets@v1
+  #      with:
+  #         keyvault: "Githubaction"
+  #         secrets: 'clientusername'  # comma separated list of secret keys that need to be fetched from the Key Vault 
+          
+            
+  maven-build:   
+    runs-on: self-hosted
+    if: github.event_name == 'pull_request'
+    needs: JavaInstall
+    environment:
+      name: Dev
+      url: 'http://dev.myapp.com'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+         maven-version: 3.6.3
+
+      - name: Build with Maven
+        run: |
+          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          mvn clean package
+ 
+      - name: UploadArtifact
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: spring-boot-web
+          path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
+          
+  sonar-test:
+    runs-on: self-hosted
+    needs: maven-build
+    steps:
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
+        
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+         maven-version: 3.6.3
+         
+      - name: Test with Sonarqube
+        run: |
+          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          mvn sonar:sonar -Dsonar.host.url=http://172.190.116.64:9000/ -Dsonar.login=ce70c3c87d57c5246ca1325bc0ccaa1a8a9d85c8
+             
+  DockerimageBuildPush-stage:
+    runs-on: self-hosted
+    needs: sonar-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Docker Login to ACR
+        uses: docker/login-action@v3.1.0
+        with:
+          registry: githubregistring.azurecr.io
+          username: c03d7f87-710f-41e6-951e-1b48aebeb8f0
+          password: GW58Q~Mvnuk1yuGIcLAp_T.3G0bv2_9UlHA-Cc-N
+          ecr: false
+
+      - name: Build Docker image
+        run: |
+          cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+          gh run download ${{ github.run_id }}
+          docker build -t githubregistring.azurecr.io/demoenv:${{ github.run_id }} .
+          # docker tag practice.azurecr.io:${{ github.run_id }} sharnithadockerhub/practice.azurecr.io:${{ github.run_id }}
+          docker push githubregistring.azurecr.io/demoenv:${{ github.run_id }}
+       
+  Trivyscan:
+    runs-on: self-hosted
+    needs: DockerimageBuildPush-stage
+    steps:
+      - name: Aqua Security Trivy
+        uses: aquasecurity/trivy-action@0.18.0
+        with:   
+          exit-code: 0
+          severity: LOW,MEDIUM,HIGH,CRITICAL
+          format: table
+          image-ref: githubregistring.azurecr.io/demoenv:${{ github.run_id }}
+ 
+#*********************************************************#
+      # Build docker image and push the image to DockerHub
+      # - name: Build Docker image
+      #   run: |
+      #     cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
+      #     gh run download ${{ github.run_id }}
+      #     ls
+      #     docker build -t github-demo:${{ github.run_id }} .
+      #     docker images
+      #     docker login -u sharnithadockerhub -p DockerhubSharni123@
+      #     docker tag github-demo:${{github.run_id}} sharnithadockerhub/github-demo:{{github.run_id}}
+      #     docker push sharnithadockerhub/github-demo:{{github.run_id}}
+   
+#continuous deployment
+#   update-deployment:
+#     runs-on: ubuntu-latest
+#     needs: deploy-stag
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+      
+#       - name: Install jq
+#         run: sudo apt-get install jq
+ 
+#       - name: Update Deployment File
+#         run: |
+#           ENCODED_PASSWORD=$(echo "${{ secrets.GITLAB_PASSWORD }}" | jq -s -R -r @uri)
+#           REPO_URL="https://${{ secrets.GITLAB_USERNAME }}:${ENCODED_PASSWORD}@github.com/sharnitha1/Jro-To-Hero"
+#           sed -i "s/image: demodock\/gitlab-demo:\([0-9]*\)/image: demodock\/gitlab-demo:${{ github.run_id }}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+#           git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+# git config --global user.name "demo"
+# git config --global user.email "demo123@gmail.com"
+#           git commit -m "Update deployment image to version ${{ github.run_id }}"
+#           git push $REPO_URL HEAD:feature
