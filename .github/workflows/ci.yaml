@@ -9,6 +9,7 @@ on:
 jobs:
   JavaInstall:
     if: "github.ref == github.event.pull_request.head.ref"
+    # if: github.ref == github.event.pull_request.head.ref && github.ref == 'refs/heads/main'
     runs-on: self-hosted
     steps:
       # - name: Checkout code
