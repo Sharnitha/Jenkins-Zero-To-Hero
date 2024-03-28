@@ -32,11 +32,7 @@ jobs:
             
   maven-build:   
     runs-on: self-hosted
-    # if: github.event_name == 'pull_request'
     needs: JavaInstall
-    environment:
-      name: Dev
-      # url: 'http://dev.myapp.com'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
