@@ -54,6 +54,7 @@ jobs:
           path: java-maven-sonar-argocd-helm-k8s/spring-boot-app/target/spring-boot-web.jar
           
   sonar-test:
+    if: github.event_name=='pull_request'&&github.event.action=='opened'&&github.event_name=='push'&&github.ref=='refs/heads/main'
     runs-on: self-hosted
     needs: maven-build
     steps:
