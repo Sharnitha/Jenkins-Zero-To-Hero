@@ -10,7 +10,7 @@ RUN pwd
 WORKDIR /home/Sharni/actions-runner/_work/Jenkins-Zero-To-Hero/Jenkins-Zero-To-Hero/java-maven-sonar-argocd-helm-k8s/spring-boot-app/
 
 RUN ls 
-
+#this is like calling a artifact
 COPY ${artifact} app.jar
 
  # This should not be changed
