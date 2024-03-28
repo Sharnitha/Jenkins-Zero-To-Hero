@@ -1,0 +1,25 @@
+name: cd on GitHub
+on:
+  workflow_run:
+    workflows: 
+      - CI from GitHub
+jobs:
+    update-deployment:
+      runs-on: self-hosted
+      steps:
+        # - name: Checkout code
+        #   uses: actions/checkout@v2
+        
+        - name: Install jq
+          run: sudo apt-get install jq
+   
+  #       - name: Update Deployment File
+  #         run: |
+  #           ENCODED_PASSWORD=$(echo "${{ secrets.GITLAB_PASSWORD }}" | jq -s -R -r @uri)
+  #           REPO_URL="https://${{ secrets.GITLAB_USERNAME }}:${ENCODED_PASSWORD}@github.com/sharnitha1/Jro-To-Hero"
+  #           sed -i "s/image: demodock\/gitlab-demo:\([0-9]*\)/image: demodock\/gitlab-demo:${{ github.run_id }}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+  #           git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
+  # git config --global user.name "demo"
+# git config --global user.email "demo123@gmail.com"
+#           git commit -m "Update deployment image to version ${{ github.run_id }}"
+#           git push $REPO_URL HEAD:feature
