@@ -58,7 +58,7 @@ jobs:
           
   sonar-test:
     if: "github.ref != github.event.pull_request.head.ref"
-    # if: github.ref == github.event.pull_request.head.ref || github.ref == 'refs/heads/main'
+    # if: github.ref != github.event.pull_request.head.ref || github.ref == 'refs/heads/main'
     runs-on: self-hosted
     needs: maven-build
     steps:
