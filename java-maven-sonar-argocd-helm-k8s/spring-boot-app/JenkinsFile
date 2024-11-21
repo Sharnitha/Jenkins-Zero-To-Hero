@@ -1,40 +1,51 @@
-
 pipeline {
   agent any  // No Docker agent, run on any available agent
   
+  environment {
+    registryCredential = 'dockerhubcred'   // Credential ID in Jenkins
+    imageName = 'jenkins_my-docker-image'   // Image name (be sure this matches your Docker Hub repo)
+    imageTag = 'latest'                    // Image tag
+    dockerHubRepo = 'sharnithadockerhub'    // Your Docker Hub username
+  }
+
   stages {
     stage('Checkout') {
       steps {
-        sh 'echo passed'
+        echo 'Checkout Repository'
         git branch: 'main', url: 'https://github.com/Sharnitha/Jenkins-Zero-To-Hero.git'
       }
     }
+
     stage('Build and Test') {
       steps {
+        echo 'Build and Test the Project'
         sh 'ls -ltr'
-        // build the project and create a JAR file
+        // Build the project and create a JAR file
         sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
       }
     }
 
     stage('Converting Docker Image') {
       steps {
-        sh 'ls -ltr'
-        // Build the Docker image from the directory containing the Dockerfile
-        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t sharnithadockerhub/jenkins_my-docker-image .'
+        echo 'Building Docker Image'
+        script {
+          // Build the Docker image and capture it into the dockerImage variable
+          dockerImage = docker.build("${dockerHubRepo}/${imageName}:${imageTag}", "java-maven-sonar-argocd-helm-k8s/spring-boot-app")
+        }
       }
     }
-   stage('Pushing Image') {
-      environment {
-               registryCredential = 'dockerhubcred'
-           }
-      steps{
+
+    stage('Pushing Image') {
+      steps {
+        echo 'Pushing Docker Image to Docker Hub'
         script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("latest")
+          // Authenticate to Docker Hub and push the built image
+          docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+            // Push the image
+            dockerImage.push("${imageTag}")
           }
         }
       }
     }
- }
+  }
 }
