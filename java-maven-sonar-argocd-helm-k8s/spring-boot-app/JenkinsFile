@@ -23,5 +23,16 @@ pipeline {
         sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t my-docker-image .'
       }
     }
+   stage('Pushing Image') {
+      environment {
+               registryCredential = 'dockerhubcred'
+           }
+      steps{
+        script {
+          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+            dockerImage.push("latest")
+          }
+        }
+      }
   }
 }
