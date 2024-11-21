@@ -21,7 +21,7 @@ pipeline {
       steps {
         sh 'ls -ltr'
         // Build the Docker image from the directory containing the Dockerfile
-        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t my-docker-image .'
+        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t sharnithadockerhub/jenkins_my-docker-image .'
       }
     }
    stage('Pushing Image') {
