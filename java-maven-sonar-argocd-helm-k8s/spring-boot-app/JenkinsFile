@@ -3,7 +3,7 @@ pipeline {
     
     environment {
         registryCredential = 'dockerhubcred'   // Credential ID in Jenkins
-        imageName = 'Sharni-Jenkins_Javaimage'   // Image name (be sure this matches your Docker Hub repo)
+        imageName = 'sharni-javaimage'   // Image name (be sure this matches your Docker Hub repo)
         imageTag = 'latest'                    // Image tag
         dockerHubRepo = 'sharnithadockerhub'    // Your Docker Hub username
     }
