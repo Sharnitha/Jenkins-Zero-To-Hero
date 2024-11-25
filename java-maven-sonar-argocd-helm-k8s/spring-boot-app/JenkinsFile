@@ -1,63 +1,70 @@
 pipeline {
-  agent any  // No Docker agent, run on any available agent
-  
-  environment {
-    registryCredential = 'dockerhubcred'   // Credential ID in Jenkins
-    imageName = 'jenkins_my-docker-image'   // Image name (be sure this matches your Docker Hub repo)
-    imageTag = 'latest'                    // Image tag
-    dockerHubRepo = 'sharnithadockerhub'    // Your Docker Hub username
-  }
-
-  stages {
-    stage('Checkout') {
-      steps {
-        echo 'Checkout Repository'
-        git branch: 'main', url: 'https://github.com/Sharnitha/Jenkins-Zero-To-Hero.git'
-      }
+    agent any  // No Docker agent, run on any available agent
+    
+    environment {
+        registryCredential = 'dockerhubcred'   // Credential ID in Jenkins
+        imageName = 'jenkins_my-docker-image'   // Image name (be sure this matches your Docker Hub repo)
+        imageTag = 'latest'                    // Image tag
+        dockerHubRepo = 'sharnithadockerhub'    // Your Docker Hub username
     }
 
-    stage('Build and Test') {
-      steps {
-        echo 'Build and Test the Project'
-        sh 'ls -ltr'
-        // Build the project and create a JAR file
-        sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
-      }
-    }
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checkout Repository'
+                git branch: 'main', url: 'https://github.com/Sharnitha/Jenkins-Zero-To-Hero.git'
+            }
+        }
 
-    stage('Converting Docker Image') {
-      steps {
-        echo 'Building Docker Image'
-        script {
-          // Build the Docker image and capture it into the dockerImage variable
-          dockerImage = docker.build("${dockerHubRepo}/${imageName}:${imageTag}", "java-maven-sonar-argocd-helm-k8s/spring-boot-app")
+        stage('Build and Test') {
+            steps {
+                echo 'Build and Test the Project'
+                sh 'ls -ltr'
+                // Build the project and create a JAR file
+                sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+            }
         }
-      }
-    }
 
-    stage('Pushing Image') {
-      steps {
-        echo 'Pushing Docker Image to Docker Hub'
-        script {
-          // Authenticate to Docker Hub and push the built image
-          docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-            // Push the image
-            dockerImage.push("${imageTag}")
-          }
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker Image'
+                script {
+                    // Build the Docker image and capture it into the dockerImage variable
+                    dockerImage = docker.build("${dockerHubRepo}/${imageName}:${imageTag}", "java-maven-sonar-argocd-helm-k8s/spring-boot-app")
+                }
+            }
         }
-      }
+
+        stage('Push Docker Image') {
+            steps {
+                echo 'Pushing Docker Image to Docker Hub'
+                script {
+                    // Authenticate to Docker Hub and push the built image
+                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+                        // Push the image
+                        dockerImage.push("${imageTag}")
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo 'Deploying App to Kubernetes'
+                script {
+                    // Ensure your Kubernetes deployment file and kubeconfig are set up properly
+                    kubernetesDeploy(configs: "java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml", kubeconfigId: "kubernetes")
+                }
+            }
+        }
     }
-    stage('Update Deployment File') {
-        environment {
-            GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
-            GIT_USER_NAME = "Sharnitha"
+    
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
         }
-        stage('Deploying App to Kubernetes') {
-          steps {
-            script {
-            kubernetesDeploy(configs: "java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml", kubeconfigId: "kubernetes")
+        failure {
+            echo 'Pipeline failed!'
         }
-      }
     }
-  }
 }
