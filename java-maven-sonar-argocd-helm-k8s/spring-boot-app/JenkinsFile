@@ -52,9 +52,7 @@ pipeline {
             steps {
                 echo 'Deploying App to Kubernetes'
                 script {
-                     withCredentials([file(credentialsId: 'kubernetes', variable: 'KUBECONFIG')]) {
-                              kubectl get ns
-                     }
+                     kubectl get ns
                     // Ensure your Kubernetes deployment file and kubeconfig are set up properly
                     // kubernetesDeploy(configs: "java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml", kubeconfigId: "kubernetes")
                 }
