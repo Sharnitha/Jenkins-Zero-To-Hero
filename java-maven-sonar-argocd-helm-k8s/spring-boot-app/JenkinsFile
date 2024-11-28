@@ -28,44 +28,19 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker Image'
-                script {
-                    // Build the Docker image and capture it into the dockerImage variable
-                    dockerImage = docker.build("${dockerHubRepo}/${imageName}:${imageTag}", "java-maven-sonar-argocd-helm-k8s/spring-boot-app")
-                }
+                docker build -t sharnithadockerhub/testimage:jenkins1 .
             }
         }
 
         stage('Push Docker Image') {
             steps {
                 echo 'Pushing Docker Image to Docker Hub'
-                script {
-                    // Authenticate to Docker Hub and push the built image
-                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        // Push the image
-                        dockerImage.push("${imageTag}")
-                    }
-                }
+                docker.withRegistry('https://registry.hub.docker.com', 'registryCredential') {
+                  sh 'docker push sharnithadockerhub/testimage:jenkins1'
+            }
+
             }
         }
 
-        stage('Update Deployment File') {
-            environment {
-                GIT_REPO_NAME = "Jenkins-Zero-To-Hero"
-                GIT_USER_NAME = "Sharnitha"
-            }
-                steps {
-                    withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-                        sh '''
-                            git config user.email "sharnithaa2000@gmail.com"
-                            git config user.name "Sharnitha Vijayakumar"
-                            BUILD_NUMBER=${BUILD_NUMBER}
-                            sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                            git add java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml
-                            git commit -m "Update deployment image to version ${BUILD_NUMBER}"
-                            git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                        '''
-                    }
-                }
-          }
     }
 }
