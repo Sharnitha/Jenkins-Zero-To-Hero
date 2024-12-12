@@ -32,15 +32,5 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                echo 'Pushing Docker Image to Docker Hub'
-                docker.withRegistry('https://registry.hub.docker.com', 'registryCredential') {
-                  sh 'docker push sharnithadockerhub/testimage:jenkins1'
-            }
-
-            }
-        }
-
     }
 }
