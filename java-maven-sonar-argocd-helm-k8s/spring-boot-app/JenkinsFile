@@ -36,6 +36,7 @@ pipeline {
             steps {
                 echo 'Building Docker Image'
                 sh """
+                    cd java-maven-sonar-argocd-helm-k8s/spring-boot-app
                     docker build -t ${dockerHubRepo}/testimage:jenkins1 .
                 """
             }
