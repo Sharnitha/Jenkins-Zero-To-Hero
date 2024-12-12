@@ -31,7 +31,5 @@ pipeline {
                 docker build -t sharnithadockerhub/testimage:jenkins1 .
             }
         }
-
-
     }
 }
