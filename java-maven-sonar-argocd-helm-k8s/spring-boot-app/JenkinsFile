@@ -28,7 +28,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker Image'
-                docker build -t sharnithadockerhub/testimage:jenkins1 .
+                sh """
+                    docker build -t ${dockerHubRepo}/testimage:jenkins1 .
+                """
             }
         }
     }
