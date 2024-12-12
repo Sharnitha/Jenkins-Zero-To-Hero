@@ -24,11 +24,20 @@ pipeline {
                 sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
             }
         }
-
+        stage('Listing files') {
+            steps {
+                echo 'Listing files'
+                sh """
+                    ls -a
+                """
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 echo 'Building Docker Image'
-                docker build -t ${dockerHubRepo}/testimage:jenkins1 .
+                sh """
+                    docker build -t ${dockerHubRepo}/testimage:jenkins1 .
+                """
             }
         }
     }
